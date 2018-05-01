@@ -1,0 +1,306 @@
+basePath: /v1
+consumes:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+definitions:
+  GoaContractCoverage:
+    description: Trade structure exposures (coverage view)
+    example:
+      trade_id_list:
+      - Quos et officia earum sapiente.
+      - Quos et officia earum sapiente.
+    properties:
+      trade_id_list:
+        description: List of trades under the contract
+        example:
+        - Quos et officia earum sapiente.
+        - Quos et officia earum sapiente.
+        items:
+          example: Quos et officia earum sapiente.
+          type: string
+        type: array
+    required:
+    - trade_id_list
+    title: 'Mediatype identifier: application/vnd.goa.contract+json; view=coverage'
+    type: object
+  GoaContractExpanded:
+    description: Trade structure exposures (expanded view)
+    example:
+      contract_id: Harum incidunt voluptas porro in.
+      counterparty_id: Doloribus blanditiis placeat rem impedit.
+      exposures:
+      - 0.14793838118819866
+      - 0.14793838118819866
+      trade_id_list:
+      - Quos et officia earum sapiente.
+      - Quos et officia earum sapiente.
+    properties:
+      contract_id:
+        description: Unique contract id
+        example: Harum incidunt voluptas porro in.
+        type: string
+      counterparty_id:
+        description: Counterparty id to which the contract belongs
+        example: Doloribus blanditiis placeat rem impedit.
+        type: string
+      exposures:
+        description: contract aggregated exposures
+        example:
+        - 0.14793838118819866
+        - 0.14793838118819866
+        items:
+          example: 0.14793838118819866
+          format: double
+          type: number
+        type: array
+      trade_id_list:
+        description: List of trades under the contract
+        example:
+        - Quos et officia earum sapiente.
+        - Quos et officia earum sapiente.
+        items:
+          example: Quos et officia earum sapiente.
+          type: string
+        type: array
+    required:
+    - contract_id
+    - counterparty_id
+    - trade_id_list
+    - exposures
+    title: 'Mediatype identifier: application/vnd.goa.contract+json; view=expanded'
+    type: object
+  GoaTrade:
+    description: Trade structure exposures (default view)
+    example:
+      contract_id: Rerum ipsam aut aut quidem.
+      counterparty_id: Sunt adipisci reprehenderit et sapiente possimus.
+      trade_id: Nemo eos et.
+    properties:
+      contract_id:
+        description: contract to which trade belong
+        example: Rerum ipsam aut aut quidem.
+        type: string
+      counterparty_id:
+        description: Counterparty to which the trade belongs
+        example: Sunt adipisci reprehenderit et sapiente possimus.
+        type: string
+      trade_id:
+        description: Unique trade ID
+        example: Nemo eos et.
+        type: string
+    required:
+    - trade_id
+    - counterparty_id
+    - contract_id
+    title: 'Mediatype identifier: application/vnd.goa.trade+json; view=default'
+    type: object
+  GoaTradeExpanded:
+    description: Trade structure exposures (expanded view)
+    example:
+      contract_id: Rerum ipsam aut aut quidem.
+      counterparty_id: Sunt adipisci reprehenderit et sapiente possimus.
+      exposures:
+      - 0.011045242576720501
+      trade_id: Nemo eos et.
+    properties:
+      contract_id:
+        description: contract to which trade belong
+        example: Rerum ipsam aut aut quidem.
+        type: string
+      counterparty_id:
+        description: Counterparty to which the trade belongs
+        example: Sunt adipisci reprehenderit et sapiente possimus.
+        type: string
+      exposures:
+        description: trade exposures
+        example:
+        - 0.011045242576720501
+        items:
+          example: 0.011045242576720501
+          format: double
+          type: number
+        type: array
+      trade_id:
+        description: Unique trade ID
+        example: Nemo eos et.
+        type: string
+    required:
+    - trade_id
+    - counterparty_id
+    - contract_id
+    - exposures
+    title: 'Mediatype identifier: application/vnd.goa.trade+json; view=expanded'
+    type: object
+host: localhost:8080
+info:
+  description: A simple goa trade pricing service
+  title: The trade pricing microservice
+  version: "1.0"
+paths:
+  /contract/coverage/{contractID}:
+    get:
+      description: Get contract exposures by id
+      operationId: contract#coverage
+      parameters:
+      - description: Contract ID
+        in: path
+        name: contractID
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.contract+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GoaContractCoverage'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: coverage contract
+      tags:
+      - contract
+  /contract/exposure/{contractID}:
+    get:
+      description: Get contract exposures by id
+      operationId: contract#exposure
+      parameters:
+      - description: Contract ID
+        in: path
+        name: contractID
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.contract+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GoaContractExpanded'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: exposure contract
+      tags:
+      - contract
+  /contract/show/{contractID}:
+    get:
+      description: Get trade by id
+      operationId: contract#show
+      parameters:
+      - description: Contract ID
+        in: path
+        name: contractID
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.trade+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GoaTrade'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: show contract
+      tags:
+      - contract
+  /trade/exposure/{tradeID}:
+    get:
+      description: Get trade exposures by id
+      operationId: trade#exposure
+      parameters:
+      - description: Trade ID
+        in: path
+        name: tradeID
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.trade+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GoaTradeExpanded'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: exposure trade
+      tags:
+      - trade
+  /trade/price/{ctp}/{contract}/{trade}:
+    get:
+      description: Creates new trade and randomly generates its exposures
+      operationId: trade#price
+      parameters:
+      - description: Contract terms id
+        in: path
+        name: contract
+        required: true
+        type: string
+      - description: Counterparty with which trade is done
+        in: path
+        name: ctp
+        required: true
+        type: string
+      - description: Trade identifier
+        in: path
+        name: trade
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: price trade
+      tags:
+      - trade
+  /trade/show/{tradeID}:
+    get:
+      description: Get trade by id
+      operationId: trade#show
+      parameters:
+      - description: Trade ID
+        in: path
+        name: tradeID
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.trade+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GoaTrade'
+        "404":
+          description: Not Found
+      schemes:
+      - http
+      summary: show trade
+      tags:
+      - trade
+produces:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+responses:
+  NotFound:
+    description: Not Found
+  OK:
+    description: OK
+    schema:
+      $ref: '#/definitions/GoaTrade'
+schemes:
+- http
+swagger: "2.0"
